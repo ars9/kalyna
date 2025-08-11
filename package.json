@@ -1,0 +1,37 @@
+{
+  "name": "@li0ard/kalyna",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "author": "li0ard",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/li0ard/kalyna.git"
+  },
+  "bugs": {
+    "url": "https://github.com/li0ard/kalyna/issues"
+  },
+  "homepage": "https://github.com/li0ard/kalyna#readme",
+  "description": "Kalyna (DSTU 7624:2014) cipher implementation in pure TypeScript",
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
+    "docs": "typedoc --options .config/typedoc/config.cjs"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typedoc": "^0.28.9"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@li0ard/gost3413": "^0.1.6"
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": ["dstu", "crypto", "kalyna", "dstu7624"]
+}
