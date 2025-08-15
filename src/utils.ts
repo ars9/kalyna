@@ -23,3 +23,12 @@ export const uint64sToBytes = (w: BigUint64Array): Uint8Array => {
     for (let i = 0; i < w.length; i++) result.set(numberToBytesLE(w[i], 8), i * 8);
     return result;
 }
+
+export const swap_block = (k: BigUint64Array, N: number) => {
+    if (N <= 1) return;
+    const t = k[0];
+    for (let i = 0; i < N - 1; i++) {
+        k[i] = k[i + 1];
+    }
+    k[N - 1] = t;
+}
