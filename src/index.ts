@@ -8,3 +8,4 @@ export * from "./modes/cbc";
 export * from "./modes/ofb";
 export * from "./modes/ctr";
 export * from "./modes/mac";
+export * from "./modes/cfb";

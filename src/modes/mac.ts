@@ -2,8 +2,13 @@ import { xor } from "@li0ard/gost3413/dist/utils";
 import type { Kalyna } from "../const";
 import { pad } from "../padding";
 
-export const cmac = (cipherClass: Kalyna, in_: Uint8Array, q: number = 16) => {
-    let data = in_.slice();
+/**
+ * Compute CMAC
+ * @param cipherClass Initialized cipher class
+ * @param in_ Data to be authenticated
+ */
+export const cmac = (cipherClass: Kalyna, in_: Uint8Array, q: number = 16): Uint8Array => {
+    let data: Uint8Array = in_.slice();
     let zeroBlock = new Uint8Array(cipherClass.blockSize);
 
     if(data.length % cipherClass.blockSize !== 0) {
@@ -13,7 +18,7 @@ export const cmac = (cipherClass: Kalyna, in_: Uint8Array, q: number = 16) => {
 
     let Kd = cipherClass.encrypt(zeroBlock);
 
-    let c = new Uint8Array(cipherClass.blockSize);
+    let c: Uint8Array = new Uint8Array(cipherClass.blockSize);
     const numBlocks = data.length / cipherClass.blockSize;
 
     for (let i = 0; i < numBlocks - 1; i++) {
@@ -29,5 +34,5 @@ export const cmac = (cipherClass: Kalyna, in_: Uint8Array, q: number = 16) => {
     
     c = cipherClass.encrypt(xor(xor(c, lastBlock), Kd));
 
-    return c.slice(0, q)
+    return c.slice(0, q);
 }

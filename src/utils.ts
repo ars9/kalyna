@@ -8,8 +8,6 @@ export function numberToBytesLE(n: number | bigint, len: number): Uint8Array {
     return numberToBytesBE(n, len).reverse();
 }
 
-export const byte = (a: bigint): number => Number(a & 0xFFn);
-
 export const bytesToUint64s = (b: Uint8Array): BigUint64Array => {
     const size = Math.floor(b.length / 8);
     const result = new BigUint64Array(size);
