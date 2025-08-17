@@ -29,7 +29,7 @@ bunx jsr i @li0ard/kalyna
 - [x] Output Feedback (OFB)
 - [x] Counter (CTR)
 - [ ] Ciphertext Feedback (CFB)
-- [ ] MAC
+- [x] MAC
 
 ## Features
 - Provides simple and modern API
