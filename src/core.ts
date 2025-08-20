@@ -1,32 +1,113 @@
-import { IS, IT, KUPYNA_T, S, type Kalyna } from "../const";
-import { bytesToUint64s, uint64sToBytes } from "../utils";
+import { IS, IT, KUPYNA_T, S } from "./const";
+import { bytesToUint64s, swap_block, uint64sToBytes } from "./utils";
 
-export abstract class KalynaBase implements Kalyna {
+/** Kalyna abstract class */
+export abstract class KalynaBase {
+    /** Round keys for encryption */
     public erk!: BigUint64Array;
+    /** Rounds keys for decryption */
     public drk!: BigUint64Array;
+    /** Block size */
     public readonly blockSize: number;
+    /** Key size */
+    public readonly keySize: number;
 
-    constructor(public readonly N: number, protected numRounds: number, protected glOffset: number) {
+    protected readonly numRounds: number;
+    protected readonly glOffset: number;
+
+    /** Kalyna abstract class */
+    constructor(key: Uint8Array, public readonly N: number, isDouble: boolean = false) {
         this.blockSize = N << 3;
+        this.keySize = this.blockSize;
+        const X = 6 + 4 * Math.log2(N) + (isDouble ? 4 : 0);
+        this.numRounds = X - (N > 2 || isDouble ? 1 : 0);
+        this.glOffset = X * N;
+
+        if(isDouble) this.keySize *= 2;
+        if (key.length !== this.keySize) throw new Error("Invalid key length");
+        this.expandKey(key);
     }
 
-    abstract expandKey(key: Uint8Array): void;
+    private expandKey(key: Uint8Array) {
+        const log2N = Math.log2(this.N),
+            // For 128/256 and 256/512 versions
+            isDoubleKey = (this.keySize === this.blockSize * 2),
+            R = isDoubleKey ? (6 + 2 * log2N) : (4 + 2 * log2N),
+            rk = new BigUint64Array(R * this.N * 2),
+            ks = new BigUint64Array(this.N),
+            ksc = new BigUint64Array(this.N),
+            t1 = new BigUint64Array(this.N),
+            t2 = new BigUint64Array(this.N);
+        t1[0] = isDoubleKey ? BigInt(2 * this.N + 2 * log2N + 1) : BigInt(2 * this.N + 1);
 
-    protected addkey(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
+        const keys = bytesToUint64s(key);
+        let k = new BigUint64Array(isDoubleKey ? this.N * 2 : this.N);
+
+        if (isDoubleKey) {
+            const ka = keys.slice(0, this.N);
+            this.addkey(t1, t2, ka);
+            this.G(t2, t1, keys.slice(this.N));
+            this.GL(t1, t2, ka);
+            this.G0(t2, ks);
+            k.set(keys);
+        } else {
+            k.set(keys.slice(0, this.N));
+            this.addkey(t1, t2, keys);
+            this.G(t2, t1, keys);
+            this.GL(t1, t2, keys);
+            this.G0(t2, ks);
+        }
+
+        let constant = 0x0001000100010001n;
+    
+        for (let i = 0; i < R; i++) {
+            const offset = i * (this.N * 2);
+        
+            if (i > 0) {
+                if (!isDoubleKey) swap_block(k, this.N);
+                else if (i % 2 === 0) swap_block(k, this.N * 2);
+            }
+        
+            const keySource = isDoubleKey ? (i % 2 === 0 ? k.subarray(0, this.N) : k.subarray(this.N)) : k;
+            this.add_constant(ks, ksc, constant);
+            this.addkey(keySource, t2, ksc);
+            this.G(t2, t1, ksc);
+            this.GL(t1, rk.subarray(offset), ksc);
+        
+            if (i < R - 1) this.makeOddKey(rk.subarray(offset), rk.subarray(offset + this.N));
+            constant <<= 1n;
+        }
+
+        this.erk = rk.slice();
+        for (let i = ((R * 2 - 3) * this.N); i > 0; i -= this.N) this.IMC(rk.subarray(i));
+        this.drk = rk.slice();
+    }
+
+    private makeOddKey(evenkey: BigUint64Array, oddkey: BigUint64Array) {
+        const offset = 2 * this.N + 3;
+        const evenkeys = uint64sToBytes(evenkey);
+        const oddkeys = uint64sToBytes(oddkey);
+
+        oddkeys.set(evenkeys.slice(offset, this.blockSize));
+        oddkeys.set(evenkeys.slice(0, offset), (this.blockSize - offset));
+        oddkey.set(bytesToUint64s(oddkeys));
+    }
+
+    private addkey(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
         for (let i = 0; i < this.N; i++) y[i] = x[i] + k[i];
     }
 
-    protected subkey(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
+    private subkey(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
         for (let i = 0; i < this.N; i++) y[i] = x[i] - k[i];
     }
 
-    protected add_constant(src: BigUint64Array, dst: BigUint64Array, constant: bigint) {
+    private add_constant(src: BigUint64Array, dst: BigUint64Array, constant: bigint) {
         for(let i = 0; i < this.N; i++) dst[i] = src[i] + constant;
     }
 
-    protected byte(a: bigint): number { return Number(a & 0xFFn); }
+    private byte(a: bigint): number { return Number(a & 0xFFn); }
 
-    protected G0(x: BigUint64Array, y: BigUint64Array) {
+    private G0(x: BigUint64Array, y: BigUint64Array) {
         for (let i = 0; i < this.N; i++) {
             y[i] = 0n;
             for (let j = 0; j < 8; j++) {
@@ -36,7 +117,7 @@ export abstract class KalynaBase implements Kalyna {
         }
     }
 
-    protected G(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
+    private G(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
         for (let i = 0; i < this.N; i++) {
             y[i] = k[i];
             for (let j = 0; j < 8; j++) {
@@ -46,7 +127,7 @@ export abstract class KalynaBase implements Kalyna {
         }
     }
 
-    protected GL(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
+    private GL(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
         for (let i = 0; i < this.N; i++) {
             let temp = 0n;
             for (let j = 0; j < 8; j++) {
@@ -57,7 +138,7 @@ export abstract class KalynaBase implements Kalyna {
         }
     }
 
-    protected IMC(x: BigUint64Array) {
+    private IMC(x: BigUint64Array) {
         for (let i = 0; i < this.N; i++) {
             const v = x[i];
             x[i] = IT[0][S[0][this.byte(v)]] ^
@@ -71,7 +152,7 @@ export abstract class KalynaBase implements Kalyna {
         }
     }
 
-    protected IG(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
+    private IG(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
         for (let i = 0; i < this.N; i++) {
             let result = k[i];
             for (let j = 0; j < 8; j++) {
@@ -82,7 +163,7 @@ export abstract class KalynaBase implements Kalyna {
         }
     }
 
-    protected IGL(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
+    private IGL(x: BigUint64Array, y: BigUint64Array, k: BigUint64Array) {
         for (let i = 0; i < this.N; i++) {
             let result = 0n;
             for (let j = 0; j < 8; j++) {
@@ -94,6 +175,10 @@ export abstract class KalynaBase implements Kalyna {
         }
     }
 
+    /**
+     * Encrypt data
+     * @param in_ Data to be encrypted
+     */
     public encrypt(in_: Uint8Array): Uint8Array {
         if(in_.length != this.blockSize) throw new Error(`Input buffer to short (need - ${this.blockSize}, got - ${in_.length})`);
         const t1 = new BigUint64Array(this.N);
@@ -113,6 +198,10 @@ export abstract class KalynaBase implements Kalyna {
         return uint64sToBytes(t1);
     }
 
+    /**
+     * Decrypt data
+     * @param in_ Data to be decrypted
+     */
     public decrypt(in_: Uint8Array): Uint8Array {
         if(in_.length != this.blockSize) throw new Error(`Input buffer to short (need - ${this.blockSize}, got - ${in_.length})`);
         const t1 = new BigUint64Array(this.N);

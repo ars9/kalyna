@@ -1,4 +1,4 @@
-import type { Kalyna } from "../const";
+import type { KalynaBase } from "../core";
 
 /**
  * Encrypts data using Cipher Feedback (CFB) mode
@@ -8,7 +8,7 @@ import type { Kalyna } from "../const";
  * @param q Param `q`
  * @alpha
  */
-export const encryptCFB = (cipherClass: Kalyna, data: Uint8Array, iv: Uint8Array, q: number = cipherClass.blockSize): Uint8Array => {
+export const encryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8Array, q: number = cipherClass.blockSize): Uint8Array => {
     const blockSize = cipherClass.blockSize;
     if (q !== 1 && q !== 8 && q !== 16 && q !== 32 && q !== 64) throw new Error('q must be 1, 8, 16, 32, or 64');
     if (q > blockSize) throw new Error('q cannot exceed block size');
@@ -63,7 +63,7 @@ export const encryptCFB = (cipherClass: Kalyna, data: Uint8Array, iv: Uint8Array
  * @param q Param `q`
  * @alpha
  */
-export const decryptCFB = (cipherClass: Kalyna, data: Uint8Array, iv: Uint8Array, q: number = cipherClass.blockSize): Uint8Array => {
+export const decryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8Array, q: number = cipherClass.blockSize): Uint8Array => {
     const blockSize = cipherClass.blockSize;
     if (q !== 1 && q !== 8 && q !== 16 && q !== 32 && q !== 64) throw new Error('q must be 1, 8, 16, 32, or 64');
     if (q > blockSize) throw new Error('q cannot exceed block size');

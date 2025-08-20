@@ -1,12 +1,7 @@
 import { bytesToHex, hexToNumber, numberToBytesBE } from "@li0ard/gost3413/dist/utils";
 
-export function bytesToNumberLE(bytes: Uint8Array): bigint {
-    return hexToNumber(bytesToHex(bytes.slice().reverse()));
-}
-
-export function numberToBytesLE(n: number | bigint, len: number): Uint8Array {
-    return numberToBytesBE(n, len).reverse();
-}
+export const bytesToNumberLE = (bytes: Uint8Array): bigint => hexToNumber(bytesToHex(bytes.slice().reverse()));
+export const numberToBytesLE = (n: bigint, len: number): Uint8Array => numberToBytesBE(n, len).reverse();
 
 export const bytesToUint64s = (b: Uint8Array): BigUint64Array => {
     const size = Math.floor(b.length / 8);
@@ -25,8 +20,6 @@ export const uint64sToBytes = (w: BigUint64Array): Uint8Array => {
 export const swap_block = (k: BigUint64Array, N: number) => {
     if (N <= 1) return;
     const t = k[0];
-    for (let i = 0; i < N - 1; i++) {
-        k[i] = k[i + 1];
-    }
+    for (let i = 0; i < N - 1; i++) k[i] = k[i + 1];
     k[N - 1] = t;
 }

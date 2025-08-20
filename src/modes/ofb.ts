@@ -1,5 +1,5 @@
 import { ofb as ofb_ } from "@li0ard/gost3413";
-import type { Kalyna } from "../const";
+import type { KalynaBase } from "../core";
 
 /**
  * Proceed data using the Output Feedback (OFB) mode
@@ -7,7 +7,7 @@ import type { Kalyna } from "../const";
  * @param data Data to be encrypted/decrypted
  * @param iv Initialization vector
  */
-export const ofb = (cipherClass: Kalyna, data: Uint8Array, iv: Uint8Array): Uint8Array => {
+export const ofb = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8Array): Uint8Array => {
     const encrypter = (buf: Uint8Array) => (cipherClass.encrypt(buf));
     return ofb_(encrypter, cipherClass.blockSize, data, iv);
 }

@@ -1,24 +1,3 @@
-/** Kalyna abstract class */
-export abstract class Kalyna {
-    /** Block size */
-    abstract readonly blockSize: number;
-    /** Round keys for encryption */
-    abstract erk: BigUint64Array;
-    /** Rounds keys for decryption */
-    abstract drk: BigUint64Array;
-
-    /**
-     * Encrypt data
-     * @param in_ Data to be encrypted
-     */
-    public abstract encrypt(in_: Uint8Array): Uint8Array;
-    /**
-     * Decrypt data
-     * @param in_ Data to be decrypted
-     */
-    public abstract decrypt(in_: Uint8Array): Uint8Array;
-}
-
 export const T0: Readonly<BigUint64Array> = new BigUint64Array([
     0xa832a829d77f9aa8n, 0x4352432297d41143n, 0x5f3e5fc2df80615fn, 0x061e063014121806n,
     0x6bda6b7f670cb16bn, 0x75bc758f2356c975n, 0x6cc16c477519ad6cn, 0x592059f2cb927959n,
@@ -830,7 +809,7 @@ export const IT: Readonly<BigUint64Array[]> = [
         0xf4bf86ec232e520an, 0xfae31f4f6fa8bfben, 0x058bf18deca70966n, 0x41c5b9bb1da3bdcdn, 0x2b557f679cc74f35n, 0xca208dac4d3dcfa4n, 0x9a7826942b9f5f8an, 0xf0e8e048aafbad72n,
         0x53210f43c934970cn, 0xc1f7e582ed1c2b76n, 0xc47c140f01bb2210n, 0x9d56e44b0ddca7d0n, 0x386d5eb62d2293ean, 0xe65b3014f7b978cbn, 0x9424bf376719b23en, 0x30c392e32295701an,
     ])
-]
+];
 
 export const S: Readonly<Uint8Array[]> = [
     new Uint8Array([
@@ -904,8 +883,8 @@ export const S: Readonly<Uint8Array[]> = [
         0xE7, 0xB0, 0x82, 0xF7, 0xFE, 0x9D, 0x87, 0x5C, 0x81, 0x35, 0xDE, 0xB4, 0xA5, 0xFC, 0x80, 0xEF,
         0xCB, 0xBB, 0x6B, 0x76, 0xBA, 0x5A, 0x7D, 0x78, 0x0B, 0x95, 0xE3, 0xAD, 0x74, 0x98, 0x3B, 0x36,
         0x64, 0x6D, 0xDC, 0xF0, 0x59, 0xA9, 0x4C, 0x17, 0x7F, 0x91, 0xB8, 0xC9, 0x57, 0x1B, 0xE0, 0x61,
-    ]),
-]
+    ])
+];
 
 export const IS: Readonly<Uint8Array[]> = [
     new Uint8Array([
@@ -980,4 +959,4 @@ export const IS: Readonly<Uint8Array[]> = [
         0xFE, 0x3E, 0xBE, 0xEA, 0xAA, 0x44, 0xC6, 0xD0, 0x36, 0x48, 0x70, 0x96, 0x77, 0x24, 0x53, 0xDF,
         0xF3, 0x83, 0x28, 0x32, 0x45, 0x1E, 0xA4, 0xD3, 0xA2, 0x46, 0x6E, 0x9C, 0xDD, 0x63, 0xD4, 0x9D,
     ])
-]
+];
