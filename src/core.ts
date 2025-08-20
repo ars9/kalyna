@@ -12,19 +12,22 @@ export abstract class KalynaBase {
     /** Key size */
     public readonly keySize: number;
 
-    protected readonly numRounds: number;
-    protected readonly glOffset: number;
+    private readonly numRounds: number;
+    private readonly glOffset: number;
+    private wordOffsets: number[];
 
     /** Kalyna abstract class */
     constructor(key: Uint8Array, public readonly N: number, isDouble: boolean = false) {
+        if(N < 2 || (N & (N - 1)) !== 0) throw new Error("N must be power of 2 and >= 2");
         this.blockSize = N << 3;
         this.keySize = this.blockSize;
+        if(isDouble) this.keySize *= 2;
+        if (key.length !== this.keySize) throw new Error("Invalid key length");
+
+        this.wordOffsets = Array.from({length: 8}, (_, j) => Math.floor(j * this.N / 8));
         const X = 6 + 4 * Math.log2(N) + (isDouble ? 4 : 0);
         this.numRounds = X - (N > 2 || isDouble ? 1 : 0);
         this.glOffset = X * N;
-
-        if(isDouble) this.keySize *= 2;
-        if (key.length !== this.keySize) throw new Error("Invalid key length");
         this.expandKey(key);
     }
 
@@ -111,8 +114,7 @@ export abstract class KalynaBase {
         for (let i = 0; i < this.N; i++) {
             y[i] = 0n;
             for (let j = 0; j < 8; j++) {
-                const wordOffset = this.N === 8 ? j : this.N === 4 ? Math.floor(j / 2) : Math.floor(j / 4);
-                y[i] ^= KUPYNA_T[j][this.byte(x[(i - wordOffset + this.N) % this.N] >> BigInt(j << 3))];
+                y[i] ^= KUPYNA_T[j][this.byte(x[(i - this.wordOffsets[j] + this.N) % this.N] >> BigInt(j << 3))];
             }
         }
     }
@@ -121,8 +123,7 @@ export abstract class KalynaBase {
         for (let i = 0; i < this.N; i++) {
             y[i] = k[i];
             for (let j = 0; j < 8; j++) {
-                const wordOffset = this.N === 8 ? j : this.N === 4 ? Math.floor(j / 2) : Math.floor(j / 4);
-                y[i] ^= KUPYNA_T[j][this.byte(x[(i - wordOffset + this.N) % this.N] >> BigInt(j << 3))];
+                y[i] ^= KUPYNA_T[j][this.byte(x[(i - this.wordOffsets[j] + this.N) % this.N] >> BigInt(j << 3))];
             }
         }
     }
@@ -131,8 +132,7 @@ export abstract class KalynaBase {
         for (let i = 0; i < this.N; i++) {
             let temp = 0n;
             for (let j = 0; j < 8; j++) {
-                const wordOffset = this.N === 8 ? j : this.N === 4 ? Math.floor(j / 2) : Math.floor(j / 4);
-                temp ^= KUPYNA_T[j][this.byte(x[(i - wordOffset + this.N) % this.N] >> BigInt(j << 3))];
+                temp ^= KUPYNA_T[j][this.byte(x[(i - this.wordOffsets[j] + this.N) % this.N] >> BigInt(j << 3))];
             }
             y[i] = k[i] + temp;
         }
@@ -156,8 +156,7 @@ export abstract class KalynaBase {
         for (let i = 0; i < this.N; i++) {
             let result = k[i];
             for (let j = 0; j < 8; j++) {
-                const wordOffset = this.N === 8 ? j : this.N === 4 ? Math.floor(j / 2) : Math.floor(j / 4);
-                result ^= IT[j][this.byte(x[(i + wordOffset) % this.N] >> BigInt(j << 3))];
+                result ^= IT[j][this.byte(x[(i + this.wordOffsets[j]) % this.N] >> BigInt(j << 3))];
             }
             y[i] = result;
         }
@@ -167,9 +166,8 @@ export abstract class KalynaBase {
         for (let i = 0; i < this.N; i++) {
             let result = 0n;
             for (let j = 0; j < 8; j++) {
-                const wordOffset = this.N === 8 ? j : this.N === 4 ? Math.floor(j / 2) : Math.floor(j / 4);
                 const shift = BigInt(j << 3);
-                result ^= BigInt(IS[j % 4][this.byte(x[(i + wordOffset) % this.N] >> shift)]) << shift;
+                result ^= BigInt(IS[j % 4][this.byte(x[(i + this.wordOffsets[j]) % this.N] >> shift)]) << shift;
             }
             y[i] = result - k[i];
         }
