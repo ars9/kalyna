@@ -1,3 +1,4 @@
+import { concatBytes, xor } from "@li0ard/gost3413/dist/utils";
 import type { KalynaBase } from "../core";
 
 /**
@@ -20,36 +21,29 @@ export const encryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8A
     const result = new Uint8Array(data.length);
     let dataOff = 0;
 
-    if (offset > 0) {
-        while (offset < q && dataOff < data.length) {
-            result[dataOff] = data[dataOff] ^ gamma[offset];
-            feed[offset++] = result[dataOff++];
-            
-            if (offset === blockSize) {
-                gamma = cipherClass.encrypt(feed);
-                offset = 0;
-            }
+
+    while (offset > 0 && dataOff < data.length) {
+        result[dataOff] = data[dataOff] ^ gamma[offset];
+        feed[offset++] = result[dataOff++];
+        
+        if (offset >= blockSize) {
+            gamma = cipherClass.encrypt(feed);
+            offset = blockSize - q;
         }
     }
     
     while (dataOff + q <= data.length) {
-        for (let i = 0; i < q; i++) result[dataOff + i] = data[dataOff + i] ^ gamma[offset + i];
-        
-        feed.set(gamma);
-        for (let i = 0; i < q; i++) feed[offset + i] = result[dataOff + i];
+        for (let i = 0; i < q; i++) result[dataOff + i] = data[dataOff + i] ^ gamma[blockSize - q + i];
+        feed.set(gamma.slice(0, blockSize - q));
+        feed.set(result.subarray(dataOff, dataOff + q), blockSize - q);
         
         gamma = cipherClass.encrypt(feed);
-        offset = 0;
         dataOff += q;
     }
     
     while (dataOff < data.length) {
-        result[dataOff] = data[dataOff] ^ gamma[offset];
-        feed[offset++] = result[dataOff++];
-        if (offset === blockSize) {
-            gamma = cipherClass.encrypt(feed);
-            offset = 0;
-        }
+        result[dataOff] = data[dataOff] ^ gamma[blockSize - (data.length - dataOff)];
+        dataOff++;
     }
     
     return result;
@@ -75,36 +69,28 @@ export const decryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8A
     const result = new Uint8Array(data.length);
     let dataOff = 0;
     
-    if (offset > 0) {
-        while (offset < q && dataOff < data.length) {
-            result[dataOff] = data[dataOff] ^ gamma[offset];
-            feed[offset++] = data[dataOff++];
-            
-            if (offset === blockSize) {
-                gamma = cipherClass.encrypt(feed);
-                offset = 0;
-            }
+    while (offset > 0 && dataOff < data.length) {
+        result[dataOff] = data[dataOff] ^ gamma[offset];
+        feed[offset++] = data[dataOff++];
+        
+        if (offset >= blockSize) {
+            gamma = cipherClass.encrypt(feed);
+            offset = blockSize - q;
         }
     }
     
     while (dataOff + q <= data.length) {
-        for (let i = 0; i < q; i++) result[dataOff + i] = data[dataOff + i] ^ gamma[offset + i];
-        
-        feed.set(gamma);
-        for (let i = 0; i < q; i++) feed[offset + i] = data[dataOff + i];
+        for (let i = 0; i < q; i++) result[dataOff + i] = data[dataOff + i] ^ gamma[blockSize - q + i];
+        feed.set(gamma.slice(0, blockSize - q));
+        feed.set(data.subarray(dataOff, dataOff + q), blockSize - q);
         
         gamma = cipherClass.encrypt(feed);
-        offset = 0;
         dataOff += q;
     }
     
     while (dataOff < data.length) {
-        result[dataOff] = data[dataOff] ^ gamma[offset];
-        feed[offset++] = data[dataOff++];
-        if (offset === blockSize) {
-            gamma = cipherClass.encrypt(feed);
-            offset = 0;
-        }
+        result[dataOff] = data[dataOff] ^ gamma[blockSize - (data.length - dataOff)];
+        dataOff++;
     }
     
     return result;

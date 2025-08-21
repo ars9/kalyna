@@ -178,7 +178,7 @@ export abstract class KalynaBase {
      * @param in_ Data to be encrypted
      */
     public encrypt(in_: Uint8Array): Uint8Array {
-        if(in_.length != this.blockSize) throw new Error(`Input buffer to short (need - ${this.blockSize}, got - ${in_.length})`);
+        if(in_.length != this.blockSize) throw new Error(`Incorrect length (need - ${this.blockSize}, got - ${in_.length})`);
         const t1 = new BigUint64Array(this.N);
         const t2 = new BigUint64Array(this.N);
         const ins = bytesToUint64s(in_);
@@ -201,7 +201,7 @@ export abstract class KalynaBase {
      * @param in_ Data to be decrypted
      */
     public decrypt(in_: Uint8Array): Uint8Array {
-        if(in_.length != this.blockSize) throw new Error(`Input buffer to short (need - ${this.blockSize}, got - ${in_.length})`);
+        if(in_.length != this.blockSize) throw new Error(`Incorrect length (need - ${this.blockSize}, got - ${in_.length})`);
         const t1 = new BigUint64Array(this.N);
         const t2 = new BigUint64Array(this.N);
         const ins = bytesToUint64s(in_);

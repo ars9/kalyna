@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { Kalyna128, Kalyna128_256, Kalyna256, Kalyna256_512, Kalyna512, cmac, pad } from "../src";
+import { Kalyna128, Kalyna128_256, Kalyna256, Kalyna256_512, Kalyna512, cmac } from "../src";
 import { hexToBytes } from "@li0ard/gost3413/dist/utils";
 
 describe("MAC", () => {
