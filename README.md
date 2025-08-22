@@ -30,6 +30,7 @@ bunx jsr i @li0ard/kalyna
 - [x] Counter (CTR)
 - [x] Ciphertext Feedback (CFB)
 - [x] MAC
+- [x] Cipher Block Chaining-Message Authentication Code (CCM)
 
 ## Features
 - Provides simple and modern API

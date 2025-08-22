@@ -23,3 +23,10 @@ export const swap_block = (k: BigUint64Array, N: number) => {
     for (let i = 0; i < N - 1; i++) k[i] = k[i + 1];
     k[N - 1] = t;
 }
+
+export const equalBytes = (a: Uint8Array, b: Uint8Array): boolean => {
+    if (a.length !== b.length) return false;
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+    return diff === 0;
+}

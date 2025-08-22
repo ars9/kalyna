@@ -1,4 +1,3 @@
-import { concatBytes, xor } from "@li0ard/gost3413/dist/utils";
 import type { KalynaBase } from "../core";
 
 /**
@@ -7,7 +6,6 @@ import type { KalynaBase } from "../core";
  * @param data Data to be encrypted
  * @param iv Initialization vector
  * @param q Param `q`
- * @alpha
  */
 export const encryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8Array, q: number = cipherClass.blockSize): Uint8Array => {
     const blockSize = cipherClass.blockSize;
@@ -35,7 +33,7 @@ export const encryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8A
     while (dataOff + q <= data.length) {
         for (let i = 0; i < q; i++) result[dataOff + i] = data[dataOff + i] ^ gamma[blockSize - q + i];
         feed.set(gamma.slice(0, blockSize - q));
-        feed.set(result.subarray(dataOff, dataOff + q), blockSize - q);
+        feed.set(result.slice(dataOff, dataOff + q), blockSize - q);
         
         gamma = cipherClass.encrypt(feed);
         dataOff += q;
@@ -55,7 +53,6 @@ export const encryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8A
  * @param data Data to be decrypt
  * @param iv Initialization vector
  * @param q Param `q`
- * @alpha
  */
 export const decryptCFB = (cipherClass: KalynaBase, data: Uint8Array, iv: Uint8Array, q: number = cipherClass.blockSize): Uint8Array => {
     const blockSize = cipherClass.blockSize;
