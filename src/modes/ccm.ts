@@ -72,7 +72,7 @@ const ccm_mac = (cipherClass: KalynaBase, iv: Uint8Array, authData: Uint8Array, 
 }
 
 /**
- * Encrypts data usingCounter with Cipher Block Chaining-Message Authentication Code (CCM) mode
+ * Encrypts data using Counter with Cipher Block Chaining-Message Authentication Code (CCM) mode
  * @param cipherClass Initialized cipher class
  * @param plainData Data to be encrypted and authenticated
  * @param iv Initialization vector
@@ -86,7 +86,7 @@ export const encryptCCM = (cipherClass: KalynaBase, plainData: Uint8Array, iv: U
 }
 
 /**
- * Decrypts data usingCounter with Cipher Block Chaining-Message Authentication Code (CCM) mode
+ * Decrypts data using Counter with Cipher Block Chaining-Message Authentication Code (CCM) mode
  * @param cipherClass Initialized cipher class
  * @param encryptedData Data to be decrypted and authenticated
  * @param iv Initialization vector
