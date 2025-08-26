@@ -1,3 +1,4 @@
+/** Pad data */
 export const pad = (data: Uint8Array, blockSize: number): Uint8Array => {
     const remainder = data.length % blockSize;
     if (remainder === 0) return data;
@@ -11,6 +12,7 @@ export const pad = (data: Uint8Array, blockSize: number): Uint8Array => {
     return padded;
 }
 
+/** Unpad data */
 export const unpad = (paddedData: Uint8Array, blockSize: number): Uint8Array => {
     if (paddedData.length % blockSize !== 0) throw new Error("Padded data length must be multiple of block size");
 

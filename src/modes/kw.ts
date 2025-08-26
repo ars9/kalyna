@@ -1,14 +1,18 @@
 import type { KalynaBase } from "../core";
 import { pad, unpad } from "../padding";
 
-export const wrapKey = (cipherClass: KalynaBase, in_: Uint8Array) => {
+/**
+ * Wrap key
+ * @param cipherClass Initialized cipher class
+ * @param data Key to be wrapped
+ */
+export const wrapKey = (cipherClass: KalynaBase, data: Uint8Array): Uint8Array => {
     const blockSize = cipherClass.blockSize;
     const block_size_kw_byte = blockSize >> 1;
-    let plain_data_size_byte = in_.length;
+    let plain_data_size_byte = data.length;
 
-    const totalBufferSize = plain_data_size_byte + (blockSize << 2);
-    const cipher_data = new Uint8Array(totalBufferSize);
-    cipher_data.set(in_, 0);
+    const cipher_data = new Uint8Array(plain_data_size_byte + (blockSize << 2));
+    cipher_data.set(data, 0);
 
     let i = 0;
     if (plain_data_size_byte % blockSize !== 0) {
@@ -61,14 +65,18 @@ export const wrapKey = (cipherClass: KalynaBase, in_: Uint8Array) => {
     return cipher_data.subarray(0, b_el_count + block_size_kw_byte);
 }
 
-export const unwrapKey = (cipherClass: KalynaBase, in_: Uint8Array) => {
+/**
+ * Unwrap key
+ * @param cipherClass Initialized cipher class
+ * @param data Key to be unwrapped
+ */
+export const unwrapKey = (cipherClass: KalynaBase, data: Uint8Array): Uint8Array => {
     const blockSize = cipherClass.blockSize;
     const block_size_kw_byte = blockSize >> 1;
-    const cipher_data_size_byte = in_.length;
-    const cipher_data = new Uint8Array(in_);
+    const cipher_data = new Uint8Array(data);
 
-    if (cipher_data_size_byte < 2 * blockSize) throw new Error("Invalid input length: must be at least 2 blocks");
-    const r = Math.floor(cipher_data_size_byte / blockSize) - 1;
+    if (data.length < 2 * blockSize) throw new Error("Invalid input length: must be at least 2 blocks");
+    const r = Math.floor(data.length / blockSize) - 1;
     const n = 2 * (r + 1);
     const v = (n - 1) * 6;
     if (r < 0 || n <= 0 || v < 0) throw new Error("Invalid input length for decryption");
@@ -77,18 +85,18 @@ export const unwrapKey = (cipherClass: KalynaBase, in_: Uint8Array) => {
     B.set(cipher_data.subarray(0, block_size_kw_byte));
 
     const b_el_count = (n - 1) * block_size_kw_byte;
-    const b = new Uint8Array(cipher_data_size_byte);
+    const b = new Uint8Array(data.length);
     b.set(cipher_data.subarray(block_size_kw_byte, block_size_kw_byte + b_el_count));
     
     const b_last_el = (n - 2) * block_size_kw_byte;
-    const shift = new Uint8Array(cipher_data_size_byte);
+    const shift = new Uint8Array(data.length);
     const swap = new Uint8Array(blockSize);
 
     for (let i = v; i >= 1; i--) {
         swap.set(b.subarray(b_last_el, b_last_el + block_size_kw_byte), 0);
         B[0] ^= i;
         swap.set(B, block_size_kw_byte);
-        swap.set(cipherClass.decrypt(swap))
+        swap.set(cipherClass.decrypt(swap));
         B.set(swap.subarray(0, block_size_kw_byte));
         shift.set(b.subarray(0, b_el_count - block_size_kw_byte));
         b.set(shift.subarray(0, b_el_count - block_size_kw_byte), block_size_kw_byte);

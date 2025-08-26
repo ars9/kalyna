@@ -30,3 +30,29 @@ export const equalBytes = (a: Uint8Array, b: Uint8Array): boolean => {
     for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
     return diff === 0;
 }
+
+export const gf2mMul = (blockSize: number, a: Uint8Array, b: Uint8Array): Uint8Array => {
+    let temp = new Uint8Array(a);
+    let result = new Uint8Array(blockSize);
+    
+    let reductionBytes = [[0x87], [0x25, 0x04], [0x25, 0x01]][Math.log2(blockSize) - 4];
+    
+    for (let i = 0; i < blockSize * 8; i++) {
+        const byteIndex = Math.floor(i / 8);
+        const bitIndex = i % 8;
+        if (byteIndex < b.length && (b[byteIndex] & (1 << bitIndex))) for (let j = 0; j < blockSize; j++) result[j] ^= temp[j];
+      
+        let carry = 0;
+        for (let j = 0; j < blockSize; j++) {
+            const nextCarry = (temp[j] & 0x80) ? 1 : 0;
+            temp[j] = ((temp[j] << 1) & 0xFF) | carry;
+            carry = nextCarry;
+        }
+      
+        if (carry) {
+            for (let j = 0; j < reductionBytes.length; j++) if (j < blockSize) temp[j] ^= reductionBytes[j];
+        }
+    }
+    
+    return result;
+}

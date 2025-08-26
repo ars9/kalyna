@@ -33,3 +33,4 @@ export * from "./modes/cfb";
 export * from "./modes/ccm";
 export * from "./modes/gcm";
 export * from "./modes/kw";
+export * from "./modes/xts";

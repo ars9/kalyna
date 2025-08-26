@@ -28,12 +28,13 @@ bunx jsr i @li0ard/kalyna
 - [x] Cipher Block Chaining (CBC)
 - [x] Output Feedback (OFB)
 - [x] Counter (CTR)
-- [x] Ciphertext Feedback (CFB)
+- [x] Cipher Feedback (CFB)
 - [x] Cipher-based Message Authentication Code (CMAC/OMAC)
 - [x] Cipher Block Chaining-Message Authentication Code (CCM)
 - [x] Galois Message Authentication Code (GMAC)
 - [x] Galois/Counter Mode (GCM)
 - [x] Key wrapping (KW)
+- [x] XEX Tweakable Block Ciphertext Stealing (XTS)
 
 ## Features
 - Provides simple and modern API

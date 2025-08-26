@@ -7,8 +7,7 @@ import { pad } from "../padding";
  * @param cipherClass Initialized cipher class
  * @param in_ Data to be authenticated
  */
-export const cmac = (cipherClass: KalynaBase, in_: Uint8Array, q: number = 16): Uint8Array => {
-    let data: Uint8Array = in_.slice();
+export const cmac = (cipherClass: KalynaBase, data: Uint8Array, q: number = 16): Uint8Array => {
     let zeroBlock = new Uint8Array(cipherClass.blockSize);
 
     if(data.length % cipherClass.blockSize !== 0) {
