@@ -96,7 +96,7 @@ export const encryptCCM = (cipherClass: KalynaBase, plainData: Uint8Array, iv: U
  */
 export const decryptCCM = (cipherClass: KalynaBase, encryptedData: Uint8Array, iv: Uint8Array, authData: Uint8Array = new Uint8Array(), q: number = 16, Nb: number = 4): Uint8Array => {
     const raw = ctr(cipherClass, encryptedData, iv);
-    const pt = raw.slice(0, -q)
+    const pt = raw.slice(0, -q);
     const hC = ccm_mac(cipherClass, iv, authData, pt, q, Nb);
 
     if(!equalBytes(raw.slice(-q), hC)) throw new Error("Invalid MAC");

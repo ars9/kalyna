@@ -29,8 +29,11 @@ bunx jsr i @li0ard/kalyna
 - [x] Output Feedback (OFB)
 - [x] Counter (CTR)
 - [x] Ciphertext Feedback (CFB)
-- [x] MAC
+- [x] Cipher-based Message Authentication Code (CMAC/OMAC)
 - [x] Cipher Block Chaining-Message Authentication Code (CCM)
+- [x] Galois Message Authentication Code (GMAC)
+- [x] Galois/Counter Mode (GCM)
+- [x] Key wrapping (KW)
 
 ## Features
 - Provides simple and modern API
