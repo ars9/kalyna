@@ -14,7 +14,7 @@ export const gmac = (cipherClass: KalynaBase, authData: Uint8Array, cipherData: 
     const blockSize = cipherClass.blockSize;
     const H = cipherClass.encrypt(new Uint8Array(blockSize));
     
-    let B = new Uint8Array(blockSize);
+    let B: Uint8Array = new Uint8Array(blockSize);
     let i = 0;
     while (i < authData.length) {
         const blockSizeToProcess = Math.min(blockSize, authData.length - i);
