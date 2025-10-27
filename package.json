@@ -1,22 +1,9 @@
 {
   "name": "@li0ard/kalyna",
   "version": "0.1.4",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      }
-    }
-  },
   "author": "li0ard",
   "repository": {
     "type": "git",
@@ -29,10 +16,7 @@
   "description": "Kalyna (DSTU 7624:2014) cipher implementation in pure TypeScript",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf dist/ && npm run build:esm && npm run build:cjs && npm run build:cjs-package",
-    "build:esm": "tsc --project tsconfig.build.json",
-    "build:cjs": "tsc --project tsconfig.build.cjs.json",
-    "build:cjs-package": "echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+    "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
     "docs": "typedoc --options .config/typedoc/config.cjs"
   },
   "devDependencies": {

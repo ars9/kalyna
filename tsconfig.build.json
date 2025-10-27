@@ -22,7 +22,7 @@
       "noUnusedLocals": false,
       "noUnusedParameters": false,
       "noPropertyAccessFromIndexSignature": false,
-      "outDir": "dist/esm",
+      "outDir": "dist",
     },
     "include": ["src/index.ts"]
 }
