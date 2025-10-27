@@ -1,4 +1,4 @@
-import { xor } from "@li0ard/gost3413/dist/utils";
+import { xor } from "@ars9/gost3413/dist/utils";
 import type { KalynaBase } from "../core";
 import { pad } from "../padding";
 

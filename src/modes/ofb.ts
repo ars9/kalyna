@@ -1,4 +1,4 @@
-import { ofb as ofb_ } from "@li0ard/gost3413";
+import { ofb as ofb_ } from "@ars9/gost3413";
 import type { KalynaBase } from "../core";
 
 /**

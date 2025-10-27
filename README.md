@@ -1,26 +1,29 @@
 <p align="center">
-    <b>@li0ard/kalyna</b><br>
-    <b>Kalyna (DSTU 7624:2014) cipher implementation in pure TypeScript</b>
+    <b>@ars9/kalyna</b><br>
+    <b>CommonJS build of @li0ard/kalyna - Kalyna (DSTU 7624:2014) cipher implementation in pure TypeScript</b>
     <br>
-    <a href="https://li0ard.is-cool.dev/kalyna">docs</a>
+    <a href="https://ars9.is-cool.dev/kalyna">docs</a>
     <br><br>
-    <a href="https://github.com/li0ard/kalyna/actions/workflows/test.yml"><img src="https://github.com/li0ard/kalyna/actions/workflows/test.yml/badge.svg" /></a>
-    <a href="https://github.com/li0ard/kalyna/blob/main/LICENSE"><img src="https://img.shields.io/github/license/li0ard/kalyna" /></a>
+    <a href="https://github.com/ars9/kalyna/actions/workflows/test.yml"><img src="https://github.com/ars9/kalyna/actions/workflows/test.yml/badge.svg" /></a>
+    <a href="https://github.com/ars9/kalyna/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ars9/kalyna" /></a>
     <br>
-    <a href="https://npmjs.com/package/@li0ard/kalyna"><img src="https://img.shields.io/npm/v/@li0ard/kalyna" /></a>
-    <a href="https://jsr.io/@li0ard/kalyna"><img src="https://jsr.io/badges/@li0ard/kalyna" /></a>
+    <a href="https://npmjs.com/package/@ars9/kalyna"><img src="https://img.shields.io/npm/v/@ars9/kalyna" /></a>
+    <a href="https://jsr.io/@ars9/kalyna"><img src="https://jsr.io/badges/@ars9/kalyna" /></a>
     <br>
     <hr>
 </p>
+
+> [!CAUTION]
+> **Disclaimer:** This package is merely a repackage of the original `@li0ard/kalyna` module. All intellectual property, development, and maintenance credit belongs to the original author, li0ard. This version is provided as a CommonJS build for specific compatibility needs and does not introduce any new features or modifications beyond the build configuration.
 
 ## Installation
 
 ```bash
 # from NPM
-npm i @li0ard/kalyna
+npm i @ars9/kalyna
 
 # from JSR
-bunx jsr i @li0ard/kalyna
+bunx jsr i @ars9/kalyna
 ```
 
 ## Supported modes
@@ -45,7 +48,7 @@ bunx jsr i @li0ard/kalyna
 ## Examples
 ### ECB mode
 ```ts
-import { Kalyna128, encryptECB, decryptECB } from "@li0ard/kalyna";
+import { Kalyna128, encryptECB, decryptECB } from "@ars9/kalyna";
 
 const cipher = new Kalyna128(hexToBytes("000102030405060708090A0B0C0D0E0F"));
 const ct = hexToBytes("81BF1C7D779BAC20E1C9EA39B4D2AD06");
@@ -57,7 +60,7 @@ console.log(decryptECB(cipher, ct));
 
 ### CBC mode
 ```ts
-import { Kalyna128, encryptCBC, decryptCBC } from "@li0ard/kalyna";
+import { Kalyna128, encryptCBC, decryptCBC } from "@ars9/kalyna";
 
 const cipher = new Kalyna128(hexToBytes("000102030405060708090A0B0C0D0E0F"));
 const iv = hexToBytes("101112131415161718191A1B1C1D1E1F");

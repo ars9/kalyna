@@ -1,19 +1,18 @@
 {
-  "name": "@li0ard/kalyna",
+  "name": "@ars9/kalyna",
   "version": "0.1.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
   "author": "li0ard",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/li0ard/kalyna.git"
+    "url": "git+https://github.com/ars9/kalyna.git"
   },
   "bugs": {
-    "url": "https://github.com/li0ard/kalyna/issues"
+    "url": "https://github.com/ars9/kalyna/issues"
   },
-  "homepage": "https://github.com/li0ard/kalyna#readme",
-  "description": "Kalyna (DSTU 7624:2014) cipher implementation in pure TypeScript",
+  "homepage": "https://github.com/ars9/kalyna#readme",
+  "description": "CommonJS build of @li0ard/kalyna - Kalyna (DSTU 7624:2014) cipher implementation in pure TypeScript",
   "license": "MIT",
   "scripts": {
     "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
@@ -27,7 +26,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@li0ard/gost3413": "^0.1.6"
+    "@ars9/gost3413": "^0.1.6"
   },
   "files": ["dist"],
   "publishConfig": {

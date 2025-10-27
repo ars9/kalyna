@@ -1,4 +1,4 @@
-import { ecb_encrypt, ecb_decrypt } from "@li0ard/gost3413";
+import { ecb_encrypt, ecb_decrypt } from "@ars9/gost3413";
 import type { KalynaBase } from "../core";
 
 /**

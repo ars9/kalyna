@@ -1,4 +1,4 @@
-import { bytesToHex, hexToNumber, numberToBytesBE } from "@li0ard/gost3413/dist/utils";
+import { bytesToHex, hexToNumber, numberToBytesBE } from "@ars9/gost3413/dist/utils";
 
 export const bytesToNumberLE = (bytes: Uint8Array): bigint => hexToNumber(bytesToHex(bytes.slice().reverse()));
 export const numberToBytesLE = (n: bigint, len: number): Uint8Array => numberToBytesBE(n, len).reverse();

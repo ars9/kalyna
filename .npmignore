@@ -1,0 +1,13 @@
+src/
+tests/
+tsconfig.json
+tsconfig.build.json
+bun.lockb
+.config/
+.github/
+.git/
+node_modules/
+.gitignore
+alphabet.txt
+jsr.json
+package-lock.json

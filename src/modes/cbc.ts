@@ -1,4 +1,4 @@
-import { cbc_encrypt, cbc_decrypt } from "@li0ard/gost3413";
+import { cbc_encrypt, cbc_decrypt } from "@ars9/gost3413";
 import type { KalynaBase } from "../core";
 
 /**

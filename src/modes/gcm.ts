@@ -1,4 +1,4 @@
-import { concatBytes, xor } from "@li0ard/gost3413/dist/utils";
+import { concatBytes, xor } from "@ars9/gost3413/dist/utils";
 import type { KalynaBase } from "../core";
 import { ctr } from "../index";
 import { equalBytes, gf2mMul } from "../utils";
